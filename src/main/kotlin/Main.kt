@@ -16,8 +16,53 @@ fun main() {
     println("link ropes with min cost: ${linkRopes(listOf(1, 3, 11, 5))}")
     println("link ropes with min cost: ${linkRopes(listOf(3, 4, 5, 6))}")
     println("link ropes with min cost: ${linkRopes(listOf(1, 3, 11, 5, 2))}")
+
+    println("find top k most frequent numbers: ${findTopKFrequentNumbers(listOf(1, 3, 5, 12, 11, 12, 11), 2)}")
+    println("find top k most frequent numbers: ${findTopKFrequentNumbers(listOf(5, 12, 11, 3, 11), 2)}")
 }
 
+/*
+    Given an unsorted array of numbers, find the top ‘K’ frequently occurring numbers in it.
+    Input: [1, 3, 5, 12, 11, 12, 11], K = 2
+    Output: [12, 11]
+
+    Here I am thinking of 2 data structures. A hash map to keep track of frequencies, and
+     a min heap of size K to keep track of k most freq numbers.
+     Another option is to convert hashMap into Map sorted by frequency and return the first k elements
+        it is a similar time complexity
+ */
+data class Num(var value: Int, var freq: Int)
+fun findTopKFrequentNumbers(list: List<Int>, k: Int): List<Int> {
+    val minHeap = PriorityQueue<Num>(k, compareBy { it.freq })
+    val hashMap: HashMap<Int,Int> = HashMap()
+
+    // O(n)
+    for(num in list) {
+        hashMap[num] = hashMap.getOrDefault(num,0)+1
+    }
+    // now hashmap is storing all numbers -> their frequencies
+    // lets put first k elements in minHeap
+    var index = 0
+    val keyList = hashMap.keys.toList()
+    // O(k*logk)
+    while(index < k) {
+        val currentNum = Num(keyList[index], hashMap.getOrDefault(keyList[index],-1))
+        minHeap.add(currentNum)
+        index++
+    }
+    // now start adding rest of the list
+    // O((d-k)logk)
+    while(index < keyList.size) {
+        val currentNum = Num(keyList[index], hashMap.getOrDefault(keyList[index],-1))
+        if(currentNum.freq > minHeap.peek().freq) {
+            minHeap.poll()
+            minHeap.add(currentNum)
+        }
+        index++
+    }
+
+    return minHeap.map { it.value }
+}
 /*
     Given ‘N’ ropes with different lengths, we need to connect these ropes into one big rope with minimum cost.
     The cost of connecting two ropes is equal to the sum of their lengths. return the cost
