@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.math.sqrt
 
 fun main() {
 
@@ -8,7 +9,43 @@ fun main() {
     println("kth smallest element: ${findKthSmallestNumber(listOf(1, 5, 12, 2, 11, 5),3)}")
     println("kth smallest element: ${findKthSmallestNumber(listOf(1, 5, 12, 2, 11, 5),4)}")
     println("kth smallest element: ${findKthSmallestNumber(listOf(5, 12, 11, -1, 12),3)}")
+
+    println("find k closest coordinates to origin: ${findKClosestPointsToOrigin(listOf(Pair(1,2),Pair(1,3)),1)}")
+    println("find k closest coordinates to origin: ${findKClosestPointsToOrigin(listOf(Pair(1,3),Pair(3,4),Pair(2,-1)),2)}")
 }
+
+/*
+    Given an array of points in the a 2D2D plane, find ‘K’ closest points to the origin.
+    Input: points = [[1,2],[1,3]], K = 1
+    Output: [[1,2]]
+    use sqrt(x^2 + y^2) to get distance.
+    After calculating distance we can keep a max heap and remove/store when next element has a smaller distance
+ */
+fun findKClosestPointsToOrigin(list: List<Pair<Int,Int>>, k: Int): List<Pair<Int,Int>> {
+    if(k >= list.size) return list
+
+    val result = PriorityQueue<Pair<Int,Int>>(k, compareByDescending { getDistanceToOrigin(it) })
+
+    // put first k elements
+    var index = 0
+    while(index < k) {
+        result.add(list[index])
+        index++
+    }
+
+    while(index < list.size) {
+        if(getDistanceToOrigin(result.peek()) > getDistanceToOrigin(list[index])) {
+            result.poll()
+            result.add(list[index])
+        }
+        index++
+    }
+    return result.toList()
+}
+private fun getDistanceToOrigin(coordinate: Pair<Int,Int>): Double {
+    return sqrt((coordinate.first*coordinate.first + coordinate.second*coordinate.second).toDouble())
+}
+
 
 /*
     Given an unsorted array of numbers, find Kth smallest number in it.
