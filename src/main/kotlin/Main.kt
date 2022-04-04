@@ -19,8 +19,40 @@ fun main() {
 
     println("find top k most frequent numbers: ${findTopKFrequentNumbers(listOf(1, 3, 5, 12, 11, 12, 11), 2)}")
     println("find top k most frequent numbers: ${findTopKFrequentNumbers(listOf(5, 12, 11, 3, 11), 2)}")
+
+    println("sort string by frequency of each char: ${sortByFrequency("Programming")}")
+    println("sort string by frequency of each char: ${sortByFrequency("abcbab")}")
 }
 
+/*
+    Given a string, sort it based on the decreasing frequency of its characters.
+    Input: "Programming"
+    Output: "rrggmmPiano"
+
+    We can go through string once, saving letter->freq in hashMap.
+    Then either put them in maxHeap and pop out while building new String
+       or sort hashMap as a map by freq descending and build string from there.
+ */
+fun sortByFrequency(str: String): String {
+    val hashMap: HashMap<Char,Int> = HashMap()
+
+    var index = 0
+    while(index < str.length) {
+        val currentChar = str[index]
+        hashMap[currentChar] = hashMap.getOrDefault(currentChar,0)+1
+        index++
+    }
+    val sortedFreqMap = hashMap.toList().sortedByDescending { it.second }.toMap()
+    val sb = StringBuilder()
+    for(char in sortedFreqMap) {
+        var count = 0
+        while(count < char.value) {
+            sb.append(char.key)
+            count++
+        }
+    }
+    return sb.toString()
+}
 /*
     Given an unsorted array of numbers, find the top ‘K’ frequently occurring numbers in it.
     Input: [1, 3, 5, 12, 11, 12, 11], K = 2
