@@ -12,6 +12,36 @@ fun main() {
 
     println("find k closest coordinates to origin: ${findKClosestPointsToOrigin(listOf(Pair(1,2),Pair(1,3)),1)}")
     println("find k closest coordinates to origin: ${findKClosestPointsToOrigin(listOf(Pair(1,3),Pair(3,4),Pair(2,-1)),2)}")
+
+    println("link ropes with min cost: ${linkRopes(listOf(1, 3, 11, 5))}")
+    println("link ropes with min cost: ${linkRopes(listOf(3, 4, 5, 6))}")
+    println("link ropes with min cost: ${linkRopes(listOf(1, 3, 11, 5, 2))}")
+}
+
+/*
+    Given ‘N’ ropes with different lengths, we need to connect these ropes into one big rope with minimum cost.
+    The cost of connecting two ropes is equal to the sum of their lengths. return the cost
+
+    So since cost goes up as we rope grows, we want to link smallest ropes first.
+     as we link, we want to maintain order and only link smallest ropes together
+ */
+fun linkRopes(list: List<Int>): Int {
+
+    val heap = PriorityQueue<Int>(list.size)
+    // O(N)
+    for(num in list) {
+        heap.add(num)
+    }
+
+    var sum = 0
+    // O(n*logn)
+    while(heap.size > 1) {
+        val newRope = heap.poll() + heap.poll()
+        sum += newRope
+        heap.add(newRope)
+    }
+
+    return sum
 }
 
 /*
@@ -45,7 +75,6 @@ fun findKClosestPointsToOrigin(list: List<Pair<Int,Int>>, k: Int): List<Pair<Int
 private fun getDistanceToOrigin(coordinate: Pair<Int,Int>): Double {
     return sqrt((coordinate.first*coordinate.first + coordinate.second*coordinate.second).toDouble())
 }
-
 
 /*
     Given an unsorted array of numbers, find Kth smallest number in it.
