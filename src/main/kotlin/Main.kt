@@ -22,6 +22,12 @@ fun main() {
 
     println("sort string by frequency of each char: ${sortByFrequency("Programming")}")
     println("sort string by frequency of each char: ${sortByFrequency("abcbab")}")
+
+    val newStream = KthLargestNumberInStream(listOf(3,1,5,12,2,11),4)
+
+    println("adding to stream: ${newStream.add(6)}")
+    println("adding to stream: ${newStream.add(13)}")
+    println("adding to stream: ${newStream.add(4)}")
 }
 
 /*
