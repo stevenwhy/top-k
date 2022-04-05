@@ -33,7 +33,57 @@ fun main() {
     println("Finding k closest numbers to X: ${findKClosestNumsToX(listOf(5,6,7,8,9), 3 , 7)}")
     println("Finding k closest numbers to X: ${findKClosestNumsToX(listOf(2, 4, 5, 6, 9), 3 , 6)}")
     println("Finding k closest numbers to X: ${findKClosestNumsToX(listOf(2, 4, 5, 6, 9), 3 , 10)}")
+
+    println("find max distinct elements: ${findMaxdDistinctAfterKRemoves(listOf(7, 3, 5, 8, 5, 3, 3), 2)}")
+    println("find max distinct elements: ${findMaxdDistinctAfterKRemoves(listOf(3, 5, 12, 11, 12), 3)}")
+    println("find max distinct elements: ${findMaxdDistinctAfterKRemoves(listOf(1, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5), 2)}")
 }
+
+/*
+    Given an array of numbers and a number ‘K’,
+    we need to remove ‘K’ numbers from the array such that we are left with maximum distinct numbers.
+    Input: [7, 3, 5, 8, 5, 3, 3], and K=2
+    Output: 3
+
+    Here we can make a frequency map. Then go through and add any freq = 1 to result++
+    and freq > 1 to a min heap.
+    Then go through min heap, if freq <= k+1, sub (freq-1) from k and result++
+     else we can stop
+
+     return result-k
+ */
+fun findMaxdDistinctAfterKRemoves(list: List<Int>, k: Int): Int {
+    var result = 0
+    val hashMap = HashMap<Int,Int>()
+
+    for(num in list) {
+        hashMap[num] = hashMap.getOrDefault(num,0)+1
+    }
+    // now we have frequency map
+    val minHeap = PriorityQueue<Int>()
+    for(entry in hashMap) {
+        if(entry.value == 1) result++
+        else minHeap.add(entry.value)
+    }
+    println("Found $result values already distinct. Min Heap=$minHeap")
+    // now have minHeap
+    var count = 0
+    var removals = k
+    while(count <= minHeap.size) {
+        val frequency = minHeap.poll()
+        if(frequency <= removals+1) {
+            removals -= (frequency-1)
+            result++
+        } else removals -= frequency
+        if(removals <= 0) {
+            removals = 0
+            break
+        }
+        count++
+    }
+    return result-removals
+}
+
 /*
     Given a sorted number array and two integers ‘K’ and ‘X’,
         find ‘K’ closest numbers to ‘X’ in the array.
