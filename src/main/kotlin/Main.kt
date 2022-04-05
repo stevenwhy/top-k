@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 fun main() {
@@ -28,6 +29,68 @@ fun main() {
     println("adding to stream: ${newStream.add(6)}")
     println("adding to stream: ${newStream.add(13)}")
     println("adding to stream: ${newStream.add(4)}")
+
+    println("Finding k closest numbers to X: ${findKClosestNumsToX(listOf(5,6,7,8,9), 3 , 7)}")
+    println("Finding k closest numbers to X: ${findKClosestNumsToX(listOf(2, 4, 5, 6, 9), 3 , 6)}")
+    println("Finding k closest numbers to X: ${findKClosestNumsToX(listOf(2, 4, 5, 6, 9), 3 , 10)}")
+}
+/*
+    Given a sorted number array and two integers ‘K’ and ‘X’,
+        find ‘K’ closest numbers to ‘X’ in the array.
+    Return the numbers in the sorted order. ‘X’ is not necessarily present in the array.
+
+    Since the array is sorted, we can binary search for where X
+        or right next to it if it doesnt exist
+        Then start checking elements to left and adding to max heap if element-x is < heap.peek()
+        repeat for right side
+
+        we could also do the same binary search but then use two-pointer strat.
+           This means checking left vs right of X' and picking which is closer to X
+          this will allow O(1) space and if we use a double sided queue, we can keep the
+            result queue in order by adding left pointer to left side of queue
+            and right pointer to right side of queue
+ */
+fun findKClosestNumsToX(list: List<Int>, k: Int, X: Int): List<Int> {
+    //start with binary search
+
+    var start = 0
+    var end = list.size-1
+    while(start < end) {
+        val middle = start + (end-start)/2
+
+        if(list[middle] < X) {
+            start = middle + 1
+        } else if(list[middle] > X) end = middle - 1
+        else {
+            //found it
+            start = middle
+            end = middle
+        }
+    }
+    //after this, start is index of X or nearby element
+    val maxHeap = PriorityQueue<Int>(k, compareByDescending { abs(it-X) })
+    maxHeap.add(list[start])
+    var count = 1
+    while(count < k) {
+        if(count <= start) {
+            val currentNumLeft = list[start-count]
+            if(maxHeap.size < k) maxHeap.add(currentNumLeft)
+            else if(abs(currentNumLeft-X) < abs(maxHeap.peek()-X)) {
+                maxHeap.poll()
+                maxHeap.add(currentNumLeft)
+            }
+        }
+        if(start+count < list.size) {
+            val currentNumRight = list[start+count]
+            if(maxHeap.size < k) maxHeap.add(currentNumRight)
+            else if(abs(currentNumRight-X) < abs(maxHeap.peek()-X)) {
+                maxHeap.poll()
+                maxHeap.add(currentNumRight)
+            }
+        }
+        count++
+    }
+    return maxHeap.toList().sorted()
 }
 
 /*
