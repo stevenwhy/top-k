@@ -333,7 +333,7 @@ fun findKthSmallestNumber(list: List<Int>, k: Int): Int {
        O(n*logK) time and O(k) space for heap
  */
 fun findKLargestNumbers(list: List<Int>, k: Int): List<Int> {
-    val result: Queue<Int> = PriorityQueue<Int>(k)
+    val result: Queue<Int> = PriorityQueue(k)
 
     if(k >= list.size) return list
     var index = 0
