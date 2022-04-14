@@ -37,6 +37,28 @@ fun main() {
     println("find max distinct elements: ${findMaxdDistinctAfterKRemoves(listOf(7, 3, 5, 8, 5, 3, 3), 2)}")
     println("find max distinct elements: ${findMaxdDistinctAfterKRemoves(listOf(3, 5, 12, 11, 12), 3)}")
     println("find max distinct elements: ${findMaxdDistinctAfterKRemoves(listOf(1, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5), 2)}")
+
+    println("Find sum between k1 and k2 smallest nums: ${findSumOfElementBetween(listOf(1, 3, 12, 5, 15, 11), 3 , 6)}")
+    println("Find sum between k1 and k2 smallest nums: ${findSumOfElementBetween(listOf(3, 5, 8, 7), 1 , 4)}")
+}
+
+/*
+    Given an array, find the sum of all numbers between the K1’th and K2’th smallest elements of that array.
+    Input: [1, 3, 12, 5, 15, 11], and K1=3, K2=6
+    Output: 23
+
+    can we sort the list first then loop through k1->k2 indices summing?
+    Here we can put all the numbers in a minHeap. O(nlogn) or O(n) on average.
+    Then go through popping elements K1 times. Then start summing numbers K2-K1 times. O(nlogn)
+ */
+fun findSumOfElementBetween(list: List<Int>, k1: Int, k2: Int): Int {
+    val minHeap = PriorityQueue<Int>()
+    var result = 0
+    for(num in list) minHeap.add(num)
+
+    repeat(k1) { minHeap.poll() }
+    repeat(k2-k1-1) { result += minHeap.poll() }
+    return result
 }
 
 /*
