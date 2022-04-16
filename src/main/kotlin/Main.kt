@@ -40,6 +40,54 @@ fun main() {
 
     println("Find sum between k1 and k2 smallest nums: ${findSumOfElementBetween(listOf(1, 3, 12, 5, 15, 11), 3 , 6)}")
     println("Find sum between k1 and k2 smallest nums: ${findSumOfElementBetween(listOf(3, 5, 8, 7), 1 , 4)}")
+
+    println("find if its letters can be rearranged: ${findIfStringCanBeRearranged("aappp")}")
+    println("find if its letters can be rearranged: ${findIfStringCanBeRearranged("Programming")}")
+    println("find if its letters can be rearranged: ${findIfStringCanBeRearranged("aapa")}")
+    println("find if its letters can be rearranged: ${findIfStringCanBeRearranged("aaaaaaaaaabbbbbbbbbccccdc")}")
+}
+
+/*
+    Given a string, find if its letters can be rearranged in such a way that no two same characters
+       come next to each other.
+    Input: "aappp"
+    Output: "papap"
+
+    Thinking we can keep a maxHeap of frequency of each letter like a Pair(letter, freq)
+    If the max freq letter is > rest of the letters+1 then impossible
+     else we can build the sample string by going down the heap adding 1 letter at a time until no more
+    aaaaaaaaaa
+    bbbbbbbbb
+    ccccc
+    d
+ */
+fun findIfStringCanBeRearranged(str: String): String {
+    // first lets make a freq map O(N)
+    val freqMap : Map<Char,Int> = str.groupingBy {it}.eachCount()
+
+    val maxHeap = PriorityQueue<Map.Entry<Char,Int>>(compareByDescending { it.value })
+    // O(NlogN)
+    for(char in freqMap) {
+        maxHeap.add(char)
+    }
+    val mostFreq = maxHeap.peek().value
+    if(mostFreq > (str.length - mostFreq + 1)) return ""
+
+    // else we can build a sample string O(N)
+    var count = 0
+    val sortedFreq = maxHeap.toMutableList()
+    var index = 0
+    val s = StringBuilder()
+    while(count < str.length) {
+        if(index >= sortedFreq.size || sortedFreq[index].value <= 0) {
+            index = 0
+        }
+        s.append(sortedFreq[index].key)
+        sortedFreq[index] = mapOf( Pair(sortedFreq[index].key, sortedFreq[index].value - 1) ).entries.first()
+        count++
+        index++
+    }
+    return s.toString()
 }
 
 /*
